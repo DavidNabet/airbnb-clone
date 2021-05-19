@@ -13,12 +13,12 @@ import {
   TouchableOpacity,
 } from "react-native";
 import Rating from "../components/Rating";
-
 export default function HomeScreen(props) {
   const navigation = useNavigation();
   const [data, setData] = useState();
   const [isLoading, setIsLoading] = useState(true);
   const [selectedId, setSelectedId] = useState(null);
+  const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -30,7 +30,9 @@ export default function HomeScreen(props) {
         setIsLoading(false);
         setData(response.data);
       } catch (err) {
-        console.log(err.response);
+        if (err.response.status === 400) {
+          setErrorMessage("Loading interrupted");
+        }
         console.log(err.message);
       }
     };
@@ -38,11 +40,18 @@ export default function HomeScreen(props) {
   }, []);
 
   return isLoading ? (
-    <ActivityIndicator
-      size="large"
-      color={colors.red}
-      style={{ marginTop: 50 }}
-    />
+    <>
+      <ActivityIndicator
+        size="large"
+        color={colors.red}
+        style={{ marginTop: 50 }}
+      />
+      {<Text>{errorMessage}</Text> && (
+        <Text style={{ color: colors.errorMessage, fontSize: 12 }}>
+          {errorMessage}
+        </Text>
+      )}
+    </>
   ) : (
     <SafeAreaView style={styles.container}>
       <FlatList

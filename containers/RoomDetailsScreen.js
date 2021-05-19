@@ -1,14 +1,26 @@
 import React, { useEffect, useState } from "react";
 import { useRoute } from "@react-navigation/core";
-import { Text, Image, View, ActivityIndicator, StyleSheet } from "react-native";
+import {
+  Text,
+  Image,
+  View,
+  ActivityIndicator,
+  StyleSheet,
+  TouchableOpacity,
+  Dimensions,
+} from "react-native";
+import { SwiperFlatList } from "react-native-swiper-flatlist";
 import axios from "axios";
 import { colors, border } from "../assets/js/colors";
 import Rating from "../components/Rating";
+import { Ionicons } from "@expo/vector-icons";
 
 export default function RoomDetailsScreen() {
   const { params } = useRoute();
+  const { width } = Dimensions.get("window");
   const [data, setData] = useState({});
   const [isLoading, setIsLoading] = useState(true);
+  const [isMore, setIsMore] = useState(false);
   let id = params.detailsId;
 
   useEffect(() => {
@@ -39,10 +51,19 @@ export default function RoomDetailsScreen() {
     <View style={styles.container}>
       <View style={styles.room}>
         <View style={styles.cover}>
-          <Image
-            source={{ uri: data.photos[0].url }}
-            style={styles.cover_img}
-            resizeMode="cover"
+          <SwiperFlatList
+            showPagination
+            index={0}
+            data={data.photos}
+            renderItem={({ item }) => (
+              <View style={{ flex: 1 }}>
+                <Image
+                  source={{ uri: item.url }}
+                  style={[styles.cover_img, { width: width }]}
+                  resizeMode="cover"
+                />
+              </View>
+            )}
           />
           <View style={styles.price_box}>
             <Text style={{ color: "white", fontSize: 18 }}>{data.price} €</Text>
@@ -62,9 +83,23 @@ export default function RoomDetailsScreen() {
           />
         </View>
         <View style={styles.block_bottom}>
-          <Text numberOfLines={3} style={styles.text}>
+          <Text numberOfLines={isMore ? 0 : 3} style={styles.text}>
             {data.description}
           </Text>
+          <TouchableOpacity
+            style={styles.read_more}
+            activeOpacity={0.8}
+            onPress={() => setIsMore(!isMore)}
+          >
+            <Text style={{ color: colors.grey, fontSize: 14, marginRight: 2 }}>
+              Show {isMore ? "Less" : "More"}
+            </Text>
+            {isMore ? (
+              <Ionicons name="caret-up" size={16} color={colors.grey} />
+            ) : (
+              <Ionicons name="caret-down" size={16} color={colors.grey} />
+            )}
+          </TouchableOpacity>
         </View>
       </View>
     </View>
@@ -120,5 +155,10 @@ const styles = StyleSheet.create({
   },
   block_bottom: {
     marginHorizontal: 16,
+  },
+  read_more: {
+    flexDirection: "row",
+    alignItems: "flex-end",
+    paddingVertical: 6,
   },
 });
