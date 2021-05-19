@@ -159,7 +159,7 @@ export default function App() {
           <Stack.Screen
             name="Details"
             component={RoomDetailsScreen}
-            options={{ title: "Details Screen" }}
+            options={{ title: "Details Screen", headerTitleAlign: "center" }}
           ></Stack.Screen>
         </Stack.Navigator>
       )}

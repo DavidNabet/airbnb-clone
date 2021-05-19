@@ -3,16 +3,16 @@ import axios from "axios";
 import { useNavigation } from "@react-navigation/core";
 import { colors, border } from "../assets/js/colors";
 import {
-  Button,
   Text,
   Image,
   View,
   FlatList,
   SafeAreaView,
   StyleSheet,
-  StatusBar,
+  ActivityIndicator,
   TouchableOpacity,
 } from "react-native";
+import Rating from "../components/Rating";
 
 export default function HomeScreen(props) {
   const navigation = useNavigation();
@@ -38,7 +38,11 @@ export default function HomeScreen(props) {
   }, []);
 
   return isLoading ? (
-    <Text>Chargement...</Text>
+    <ActivityIndicator
+      size="large"
+      color={colors.red}
+      style={{ marginTop: 50 }}
+    />
   ) : (
     <SafeAreaView style={styles.container}>
       <FlatList
@@ -52,18 +56,17 @@ export default function HomeScreen(props) {
               activeOpacity={0.9}
               onPress={() => {
                 setSelectedId(item._id);
-                // const selected = item._id === selectedId ? item._id : null;
+                const selected = item._id === selectedId ? item._id : item._id;
                 navigation.navigate("Details", {
-                  detailsId: selectedId,
+                  detailsId: selected,
                 });
               }}
             >
               <View style={styles.cover}>
-                {console.log("home ", item.photos[0].url)}
                 <Image
                   source={{ uri: item.photos[0].url }}
                   style={styles.cover_img}
-                  resizeMode="contain"
+                  resizeMode="cover"
                 />
                 <View style={styles.price_box}>
                   <Text style={{ color: "white", fontSize: 18 }}>
@@ -73,9 +76,10 @@ export default function HomeScreen(props) {
               </View>
               <View style={styles.block_bottom}>
                 <View style={{ flex: 1 }}>
-                  <Text style={styles.text} numberOfLines={1}>
+                  <Text style={styles.title} numberOfLines={1}>
                     {item.title}
                   </Text>
+                  <Rating rating={item.ratingValue} reviews={item.reviews} />
                 </View>
                 <Image
                   source={{ uri: item.user.account.photo.url }}
@@ -126,7 +130,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingVertical: 5,
+    paddingVertical: 10,
     flex: 1,
   },
   avatar: {
@@ -134,7 +138,8 @@ const styles = StyleSheet.create({
     width: 65,
     height: 65,
   },
-  text: {
-    fontSize: 20,
+  title: {
+    fontSize: 19,
+    marginBottom: 12,
   },
 });
