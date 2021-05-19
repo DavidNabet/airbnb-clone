@@ -16,11 +16,11 @@ export default function SignInScreen({ setToken, navigation, route }) {
   const width = Dimensions.get("window").width;
   const height = Dimensions.get("window").height;
   // const navigation = useNavigation();
-  const [isLoading, setIsLoading] = useState(true);
+  // const [isLoading, setIsLoading] = useState(true);
   const [email, setEmail] = useState("ulysse31@airbnb-api.com");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
-  const [disabled, setDisabled] = useState(false);
+  // const [disabled, setDisabled] = useState(false);
 
   // console.log(navigation);
 
@@ -34,8 +34,8 @@ export default function SignInScreen({ setToken, navigation, route }) {
         }
       );
       console.log("response", response);
-      setIsLoading(false);
-      setDisabled(true);
+      // setIsLoading(false);
+      // setDisabled(true);
       if (response.status === 200) {
         alert("Welcome to Airbnb App");
         setToken(response.data.token);
@@ -63,60 +63,56 @@ export default function SignInScreen({ setToken, navigation, route }) {
           <FontAwesome5 name="airbnb" size={92} color={colors.red} />
           <Text style={{ fontSize: 20, marginTop: 10 }}>Sign In</Text>
         </View>
-        {isLoading ? (
+        {/* {isLoading ? (
           <ActivityIndicator
             size="large"
             color={colors.red}
             style={{ marginTop: 50 }}
           />
-        ) : (
-          <>
-            <View style={styles.form}>
-              <TextInput
-                style={styles.input}
-                placeholder="email"
-                onChangeText={(email) => setEmail(email)}
-                value={email}
-                autoCompleteType="email"
-                autoFocus={true}
-              />
-              <TextInput
-                style={styles.input}
-                placeholder="password"
-                value={password}
-                onChangeText={(password) => setPassword(password)}
-                secureTextEntry={true}
-              />
-            </View>
-            <View style={styles.sign}>
-              {<Text>{errorMessage}</Text> && (
-                <Text style={{ color: colors.errorMessage, fontSize: 12 }}>
-                  {errorMessage}
-                </Text>
-              )}
-              <TouchableOpacity
-                activeOpacity={0.8}
-                style={styles.submit}
-                onPress={handleSubmit}
-              >
-                <Text style={{ fontSize: 16, textAlign: "center" }}>
-                  Sign In
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                activeOpacity={0.8}
-                onPress={() => {
-                  navigation.navigate("SignUp");
-                }}
-                disabled={disabled === true ? false : true}
-              >
-                <Text style={{ fontSize: 12, color: colors.grey }}>
-                  No account ? Register
-                </Text>
-              </TouchableOpacity>
-            </View>
-          </>
-        )}
+        ) } */}
+        <View style={styles.form}>
+          <TextInput
+            style={styles.input}
+            placeholder="email"
+            onChangeText={(email) => setEmail(email)}
+            value={email}
+            autoCompleteType="email"
+            keyboardType="email-address"
+            autoFocus={true}
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="password"
+            value={password}
+            onChangeText={(password) => setPassword(password)}
+            secureTextEntry={true}
+          />
+        </View>
+        <View style={styles.sign}>
+          {<Text>{errorMessage}</Text> && (
+            <Text style={{ color: colors.errorMessage, fontSize: 12 }}>
+              {errorMessage}
+            </Text>
+          )}
+          <TouchableOpacity
+            activeOpacity={0.8}
+            style={styles.submit}
+            onPress={handleSubmit}
+          >
+            <Text style={{ fontSize: 16, textAlign: "center" }}>Sign In</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            activeOpacity={0.8}
+            onPress={() => {
+              navigation.navigate("SignUp");
+            }}
+            // disabled={disabled === true ? false : true}
+          >
+            <Text style={{ fontSize: 12, color: colors.grey }}>
+              No account ? Register
+            </Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </View>
   );

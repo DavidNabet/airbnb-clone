@@ -20,7 +20,7 @@ export default function SignUpScreen({ setToken, navigation, route }) {
     "My name is nono, le petit robot, la vie d'ulysse "
   );
   const [password, setPassword] = useState("pass");
-  const [confirmPassword, setConfirmPassword] = useState("pass");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
   const handleSubmit = async () => {
@@ -73,6 +73,7 @@ export default function SignUpScreen({ setToken, navigation, route }) {
             <TextInput
               style={styles.input}
               placeholder="email"
+              keyboardType="email-address"
               value={email}
               onChangeText={(email) => setEmail(email)}
             />
@@ -123,7 +124,7 @@ export default function SignUpScreen({ setToken, navigation, route }) {
             <TouchableOpacity
               activeOpacity={0.8}
               onPress={() => {
-                navigation.navigate("SignUp");
+                navigation.navigate("SignIn");
               }}
             >
               <Text style={{ fontSize: 12, color: colors.grey }}>
