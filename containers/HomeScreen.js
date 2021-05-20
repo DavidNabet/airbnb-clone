@@ -66,7 +66,7 @@ export default function HomeScreen({ navigation }) {
                 // setSelectedId(item._id);
                 // const selected = item._id === selectedId ? item._id : item._id;
                 navigation.navigate("Room", {
-                  detailsId: item._id,
+                  id: item._id,
                 });
               }}
             >

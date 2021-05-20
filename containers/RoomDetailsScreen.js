@@ -20,7 +20,7 @@ export default function RoomDetailsScreen({ route }) {
   const [data, setData] = useState({});
   const [isLoading, setIsLoading] = useState(true);
   const [isMore, setIsMore] = useState(false);
-  let id = route.params.detailsId;
+  let id = route.params.id;
 
   useEffect(() => {
     const fetchData = async () => {

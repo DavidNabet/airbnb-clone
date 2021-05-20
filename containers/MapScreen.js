@@ -10,7 +10,7 @@ import {
 import * as Location from "expo-location";
 import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
 import { colors } from "../assets/js/colors";
-export default function MapScreen() {
+export default function MapScreen({ navigation }) {
   const [data, setData] = useState([]);
   // const [errorMessage, setErrorMessage] = useState("");
   const [isLoading, setIsLoading] = useState(true);
@@ -27,7 +27,7 @@ export default function MapScreen() {
 
         if (status === "granted") {
           const { coords } = await Location.getCurrentPositionAsync({
-            accuracy: Location.Accuracy.High,
+            accuracy: Location.Accuracy.BestForNavigation,
           });
 
           const obj = {
@@ -78,21 +78,24 @@ export default function MapScreen() {
           initialRegion={{
             latitude: coordinate.latitude,
             longitude: coordinate.longitude,
-            latitudeDelta: 0.1,
-            longitudeDelta: 0.1,
+            latitudeDelta: 0.15,
+            longitudeDelta: 0.15,
           }}
           showsUserLocation={true}
         >
-          {data.map((marker) => {
+          {data.map((room) => {
             return (
               <MapView.Marker
-                key={marker._id}
+                key={room._id}
                 coordinate={{
-                  latitude: marker.location[1],
-                  longitude: marker.location[0],
+                  latitude: room.location[1],
+                  longitude: room.location[0],
                 }}
-                title={marker.title}
-                description={marker.description}
+                onPress={() => {
+                  navigation.navigate("Room", { id: room._id });
+                }}
+                title={room.title}
+                description={room.description}
               />
             );
           })}
