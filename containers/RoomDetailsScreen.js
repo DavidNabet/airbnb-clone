@@ -15,13 +15,12 @@ import { colors, border } from "../assets/js/colors";
 import Rating from "../components/Rating";
 import { Ionicons } from "@expo/vector-icons";
 
-export default function RoomDetailsScreen() {
-  const { params } = useRoute();
+export default function RoomDetailsScreen({ route }) {
   const { width } = Dimensions.get("window");
   const [data, setData] = useState({});
   const [isLoading, setIsLoading] = useState(true);
   const [isMore, setIsMore] = useState(false);
-  let id = params.detailsId;
+  let id = route.params.detailsId;
 
   useEffect(() => {
     const fetchData = async () => {

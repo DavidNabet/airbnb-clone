@@ -3,7 +3,6 @@ import { StyleSheet, View, Text } from "react-native";
 import { Entypo } from "@expo/vector-icons";
 import { colors } from "../assets/js/colors";
 const Rating = ({ reviews, rating }) => {
-  const maxRating = [1, 2, 3, 4, 5];
   const starYellow = (
     <Entypo name="star" size={20} color={colors.yellowRating} />
   );
@@ -11,7 +10,7 @@ const Rating = ({ reviews, rating }) => {
 
   return (
     <View style={styles.reviews}>
-      {maxRating.map((item, index) => {
+      {[1, 2, 3, 4, 5].map((item, index) => {
         return (
           <View style={{ paddingRight: 1 }} key={index}>
             {item <= rating ? starYellow : starGrey}

@@ -13,8 +13,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 import Rating from "../components/Rating";
-export default function HomeScreen(props) {
-  const navigation = useNavigation();
+export default function HomeScreen({ navigation }) {
   const [data, setData] = useState();
   const [isLoading, setIsLoading] = useState(true);
   const [selectedId, setSelectedId] = useState(null);
@@ -64,10 +63,10 @@ export default function HomeScreen(props) {
               style={styles.item}
               activeOpacity={0.9}
               onPress={() => {
-                setSelectedId(item._id);
-                const selected = item._id === selectedId ? item._id : item._id;
-                navigation.navigate("Details", {
-                  detailsId: selected,
+                // setSelectedId(item._id);
+                // const selected = item._id === selectedId ? item._id : item._id;
+                navigation.navigate("Room", {
+                  detailsId: item._id,
                 });
               }}
             >

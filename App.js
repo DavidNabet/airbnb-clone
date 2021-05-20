@@ -3,7 +3,12 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import {
+  Ionicons,
+  MaterialCommunityIcons,
+  FontAwesome5,
+} from "@expo/vector-icons";
+import { colors } from "./assets/js/colors";
 import HomeScreen from "./containers/HomeScreen";
 import ProfileScreen from "./containers/ProfileScreen";
 import SignInScreen from "./containers/SignInScreen";
@@ -77,24 +82,23 @@ export default function App() {
                   }}
                 >
                   {() => (
-                    <Stack.Navigator>
-                      <Stack.Screen
-                        name="Home"
-                        options={{
-                          title: "Home",
-                          headerTitleAlign: "center",
-                        }}
-                      >
+                    <Stack.Navigator
+                      screenOptions={{
+                        headerTitleAlign: "center",
+                        headerTitle: () => (
+                          <FontAwesome5
+                            name="airbnb"
+                            size={32}
+                            color={colors.red}
+                          />
+                        ),
+                      }}
+                    >
+                      <Stack.Screen name="Home">
                         {(props) => <HomeScreen {...props} />}
                       </Stack.Screen>
-
-                      <Stack.Screen
-                        name="Profile"
-                        options={{
-                          title: "User Profile",
-                        }}
-                      >
-                        {() => <ProfileScreen />}
+                      <Stack.Screen name="Room">
+                        {(props) => <RoomDetailsScreen {...props} />}
                       </Stack.Screen>
                     </Stack.Navigator>
                   )}
@@ -113,15 +117,22 @@ export default function App() {
                   }}
                 >
                   {() => (
-                    <Stack.Navigator>
-                      <Stack.Screen
-                        name="AroundMe"
-                        options={{
-                          title: "Around Me",
-                          tabBarLabel: "Around Me",
-                        }}
-                      >
-                        {() => <MapScreen setToken={setToken} />}
+                    <Stack.Navigator
+                      screenOptions={{
+                        headerTitleAlign: "center",
+                        headerTitle: () => (
+                          <FontAwesome5
+                            name="airbnb"
+                            size={32}
+                            color={colors.red}
+                          />
+                        ),
+                      }}
+                    >
+                      <Stack.Screen name="AroundMe">
+                        {(props) => (
+                          <MapScreen {...props} setToken={setToken} />
+                        )}
                       </Stack.Screen>
                     </Stack.Navigator>
                   )}
@@ -156,11 +167,6 @@ export default function App() {
               </Tab.Navigator>
             )}
           </Stack.Screen>
-          <Stack.Screen
-            name="Details"
-            component={RoomDetailsScreen}
-            options={{ title: "Details Screen", headerTitleAlign: "center" }}
-          ></Stack.Screen>
         </Stack.Navigator>
       )}
     </NavigationContainer>
