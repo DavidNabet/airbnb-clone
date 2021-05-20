@@ -12,59 +12,54 @@ import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
 import { colors } from "../assets/js/colors";
 export default function MapScreen() {
   const [data, setData] = useState([]);
-  const [errorMessage, setErrorMessage] = useState("");
+  // const [errorMessage, setErrorMessage] = useState("");
   const [isLoading, setIsLoading] = useState(true);
-  const [coordinate, setCoordinate] = useState();
+  const [coordinate, setCoordinate] = useState({});
 
   useEffect(() => {
     const getPermission = async () => {
       try {
         // Demander la permission d'accéder aux coordonnées GPS de l'appareil
-        const has = await Location.hasServicesEnabledAsync();
-        let { status } = await Location.requestForegroundPermissionsAsync();
-        if (status === "denied") {
-          // Récupérer la localisation (coords GPS) de l'appareil
-          setIsLoading(false);
-          setErrorMessage("You need to allow permissions to continue");
-          return;
-        } else if (has && status === "granted") {
+        // const has = await Location.hasServicesEnabledAsync();
+        const { status } = await Location.requestForegroundPermissionsAsync();
+        // Récupérer la localisation (coords GPS) de l'appareil
+        // return setErrorMessage("You need to allow permissions to continue");
+
+        if (status === "granted") {
           const { coords } = await Location.getCurrentPositionAsync({
             accuracy: Location.Accuracy.High,
           });
+
+          const obj = {
+            latitude: coords.latitude,
+            longitude: coords.longitude,
+          };
+
+          try {
+            const response = await axios.get(
+              "https://express-airbnb-api.herokuapp.com/rooms/around",
+              {
+                params: {
+                  latitude: coords.latitude,
+                  longitude: coords.longitude,
+                },
+              }
+            );
+            setData(response.data);
+          } catch (e) {
+            alert("Location not work");
+          }
           console.log(coords);
-          setCoordinate(coords);
+          setCoordinate(obj);
           setIsLoading(false);
         }
       } catch (err) {
         alert("An error has occured");
-        console.log(err.message);
+        console.log("ERREUR MESSAGE ", err.message);
       }
     };
     getPermission();
   }, []);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get(
-          "https://express-airbnb-api.herokuapp.com/rooms/around",
-          {
-            params: {
-              latitude: coordinate.latitude,
-              longitude: coordinate.longitude,
-            },
-          }
-        );
-        console.log("response----------------------------", response.data);
-        setData(response.data);
-        setIsLoading(false);
-      } catch (err) {
-        console.log("ERREUR RESPONSE ", err.response);
-        console.log("ERREUR MESSAGE ", err.message);
-      }
-    };
-    fetchData();
-  }, [coordinate]);
 
   return (
     <View style={styles.container}>
@@ -74,9 +69,9 @@ export default function MapScreen() {
           color={colors.red}
           style={{ marginTop: 50 }}
         />
-      ) : errorMessage || !coordinate || !data ? (
-        <Text style={styles.errorMessage}>{errorMessage}</Text>
       ) : (
+        // ) : errorMessage || !coordinate || !data ? (
+        //   <Text style={styles.errorMessage}>{errorMessage}</Text>
         <MapView
           style={styles.map}
           provider={PROVIDER_GOOGLE}
