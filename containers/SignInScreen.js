@@ -12,7 +12,7 @@ import {
 import { FontAwesome5 } from "@expo/vector-icons";
 import axios from "axios";
 import { colors, border } from "../assets/js/colors";
-export default function SignInScreen({ setToken, navigation, route }) {
+export default function SignInScreen({ setTokenAndId, navigation, route }) {
   const width = Dimensions.get("window").width;
   const height = Dimensions.get("window").height;
   // const navigation = useNavigation();
@@ -38,11 +38,17 @@ export default function SignInScreen({ setToken, navigation, route }) {
       // setDisabled(true);
       if (response.status === 200) {
         alert("Welcome to Airbnb App");
-        setToken(response.data.token);
+        let setResponse = JSON.stringify({
+          token: response.data.token,
+          id: response.data.id,
+        });
+        setTokenAndId(setResponse);
         // const userToken = "secret-token";
         // setToken(userToken);
         // navigation.navigate("Home");
-        navigation.navigate("Tab", { screen: "Home" });
+        navigation.navigate("Tab", {
+          screen: "Home",
+        });
       }
     } catch (err) {
       console.log(err.response);

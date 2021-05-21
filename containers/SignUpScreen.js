@@ -12,7 +12,7 @@ import { FontAwesome5 } from "@expo/vector-icons";
 import { colors, border } from "../assets/js/colors";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
-export default function SignUpScreen({ setToken, navigation, route }) {
+export default function SignUpScreen({ setTokenAndId, navigation, route }) {
   //token = JptVmymUHtWrZhlHopI7iTC9UXDAMZyoBuuh1VgbxSEhx8M1sbWXFcEgsVNv8Z87
   const [email, setEmail] = useState("ulysse31@airbnb-api.com");
   const [username, setUsername] = useState("nono");
@@ -39,9 +39,17 @@ export default function SignUpScreen({ setToken, navigation, route }) {
         if (response.status === 200) {
           alert("Register completed");
           setErrorMessage("");
-          setTimeout(() => {
-            navigation.navigate("SignIn");
-          }, 3000);
+          let setResponse = JSON.stringify({
+            token: response.data.token,
+            id: response.data.id,
+          });
+          setTokenAndId(setResponse);
+          // setTimeout(() => {
+          //   navigation.navigate("SignIn");
+          // }, 3000);
+          navigation.navigate("Tab", {
+            screen: "Home",
+          });
         }
         // const userToken = "secret-token";
         // setToken(userToken);

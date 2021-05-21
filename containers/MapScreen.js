@@ -17,48 +17,41 @@ export default function MapScreen({ navigation }) {
   const [coordinate, setCoordinate] = useState({});
 
   useEffect(() => {
-    const getPermission = async () => {
+    const getPermissionAndLocation = async () => {
       try {
         // Demander la permission d'accéder aux coordonnées GPS de l'appareil
         // const has = await Location.hasServicesEnabledAsync();
         const { status } = await Location.requestForegroundPermissionsAsync();
         // Récupérer la localisation (coords GPS) de l'appareil
         // return setErrorMessage("You need to allow permissions to continue");
-
+        let response;
         if (status === "granted") {
           const { coords } = await Location.getCurrentPositionAsync({
-            accuracy: Location.Accuracy.BestForNavigation,
+            accuracy: Location.Accuracy.Highest,
           });
-
           const obj = {
             latitude: coords.latitude,
             longitude: coords.longitude,
           };
-
-          try {
-            const response = await axios.get(
-              "https://express-airbnb-api.herokuapp.com/rooms/around",
-              {
-                params: {
-                  latitude: coords.latitude,
-                  longitude: coords.longitude,
-                },
-              }
-            );
-            setData(response.data);
-          } catch (e) {
-            alert("Location not work");
-          }
-          console.log(coords);
           setCoordinate(obj);
-          setIsLoading(false);
+          // 2 - faire une requête en utilisant ces coordonnées (pour récupérer des annonces)
+          response = await axios.get(
+            `https://express-airbnb-api.herokuapp.com/rooms/around?latitude=${coords.latitude}&longitude=${coords.longitude}`
+          );
+        } else {
+          // faire une requête sans les coordonnées de l'utilisateur (pour récupérer toutes les annonces)
+          response = await axios.get(
+            `https://express-airbnb-api.herokuapp.com/rooms/around`
+          );
         }
+        setData(response.data);
+        setIsLoading(false);
       } catch (err) {
         alert("An error has occured");
         console.log("ERREUR MESSAGE ", err.message);
       }
     };
-    getPermission();
+    getPermissionAndLocation();
   }, []);
 
   return (
@@ -76,8 +69,8 @@ export default function MapScreen({ navigation }) {
           style={styles.map}
           provider={PROVIDER_GOOGLE}
           initialRegion={{
-            latitude: coordinate.latitude,
-            longitude: coordinate.longitude,
+            latitude: coordinate.latitude ? coordinate.latitude : 48.856614,
+            longitude: coordinate.longitude ? coordinate.longitude : 2.3522219,
             latitudeDelta: 0.15,
             longitudeDelta: 0.15,
           }}
