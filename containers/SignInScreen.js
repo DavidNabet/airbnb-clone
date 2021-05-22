@@ -8,6 +8,8 @@ import {
   TouchableOpacity,
   StyleSheet,
   ActivityIndicator,
+  ScrollView,
+  SafeAreaView,
 } from "react-native";
 import { FontAwesome5 } from "@expo/vector-icons";
 import axios from "axios";
@@ -18,7 +20,7 @@ export default function SignInScreen({ setTokenAndId, navigation, route }) {
   // const navigation = useNavigation();
   // const [isLoading, setIsLoading] = useState(true);
   const [email, setEmail] = useState("ulysse31@airbnb-api.com");
-  const [password, setPassword] = useState("");
+  const [password, setPassword] = useState(""); // pass
   const [errorMessage, setErrorMessage] = useState("");
   // const [disabled, setDisabled] = useState(false);
 
@@ -63,64 +65,66 @@ export default function SignInScreen({ setTokenAndId, navigation, route }) {
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.wrapper}>
-        <View style={styles.logo}>
-          <FontAwesome5 name="airbnb" size={92} color={colors.red} />
-          <Text style={{ fontSize: 20, marginTop: 10 }}>Sign In</Text>
-        </View>
-        {/* {isLoading ? (
+    <>
+      <View style={styles.container}>
+        <View style={styles.wrapper}>
+          <View style={styles.logo}>
+            <FontAwesome5 name="airbnb" size={92} color={colors.red} />
+            <Text style={{ fontSize: 20, marginTop: 10 }}>Sign In</Text>
+          </View>
+          {/* {isLoading ? (
           <ActivityIndicator
             size="large"
             color={colors.red}
             style={{ marginTop: 50 }}
           />
         ) } */}
-        <View style={styles.form}>
-          <TextInput
-            style={styles.input}
-            placeholder="email"
-            onChangeText={(email) => setEmail(email)}
-            value={email}
-            autoCompleteType="email"
-            keyboardType="email-address"
-            autoFocus={true}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="password"
-            value={password}
-            onChangeText={(password) => setPassword(password)}
-            secureTextEntry={true}
-          />
-        </View>
-        <View style={styles.sign}>
-          {<Text>{errorMessage}</Text> && (
-            <Text style={{ color: colors.errorMessage, fontSize: 12 }}>
-              {errorMessage}
-            </Text>
-          )}
-          <TouchableOpacity
-            activeOpacity={0.8}
-            style={styles.submit}
-            onPress={handleSubmit}
-          >
-            <Text style={{ fontSize: 16, textAlign: "center" }}>Sign In</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            activeOpacity={0.8}
-            onPress={() => {
-              navigation.navigate("SignUp");
-            }}
-            // disabled={disabled === true ? false : true}
-          >
-            <Text style={{ fontSize: 12, color: colors.grey }}>
-              No account ? Register
-            </Text>
-          </TouchableOpacity>
+          <View style={styles.form}>
+            <TextInput
+              style={styles.input}
+              placeholder="email"
+              onChangeText={(email) => setEmail(email)}
+              value={email}
+              autoCompleteType="email"
+              keyboardType="email-address"
+              autoFocus={true}
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="password"
+              value={password}
+              onChangeText={(password) => setPassword(password)}
+              secureTextEntry={true}
+            />
+          </View>
+          <View style={styles.sign}>
+            {<Text>{errorMessage}</Text> && (
+              <Text style={{ color: colors.errorMessage, fontSize: 12 }}>
+                {errorMessage}
+              </Text>
+            )}
+            <TouchableOpacity
+              activeOpacity={0.8}
+              style={styles.submit}
+              onPress={handleSubmit}
+            >
+              <Text style={[styles.txt_btn, { color: "white" }]}>Sign In</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              activeOpacity={0.8}
+              onPress={() => {
+                navigation.navigate("SignUp");
+              }}
+              // disabled={disabled === true ? false : true}
+            >
+              <Text style={{ fontSize: 12, color: colors.grey }}>
+                No account ? Register
+              </Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
-    </View>
+    </>
   );
 }
 
@@ -158,10 +162,17 @@ const styles = StyleSheet.create({
   submit: {
     width: "80%",
     paddingVertical: 10,
-    marginVertical: 10,
+    marginVertical: 15,
+    backgroundColor: colors.red,
     borderColor: colors.red,
     borderWidth: 2,
-    borderRadius: 25,
+    borderRadius: 30,
+  },
+  txt_btn: {
+    fontSize: 16,
+    textAlign: "center",
+    color: colors.red,
+    fontWeight: "bold",
   },
   errorMessage: {
     color: colors.errorMessage,

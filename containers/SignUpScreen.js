@@ -14,12 +14,10 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 
 export default function SignUpScreen({ setTokenAndId, navigation, route }) {
   //token = JptVmymUHtWrZhlHopI7iTC9UXDAMZyoBuuh1VgbxSEhx8M1sbWXFcEgsVNv8Z87
-  const [email, setEmail] = useState("ulysse31@airbnb-api.com");
-  const [username, setUsername] = useState("nono");
-  const [description, setDescription] = useState(
-    "My name is nono, le petit robot, la vie d'ulysse "
-  );
-  const [password, setPassword] = useState("pass");
+  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
+  const [description, setDescription] = useState("");
+  const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -37,7 +35,7 @@ export default function SignUpScreen({ setTokenAndId, navigation, route }) {
       if (response.data) {
         console.log("response", response);
         if (response.status === 200) {
-          alert("Register completed");
+          // alert("Register completed");
           setErrorMessage("");
           let setResponse = JSON.stringify({
             token: response.data.token,
@@ -51,8 +49,6 @@ export default function SignUpScreen({ setTokenAndId, navigation, route }) {
             screen: "Home",
           });
         }
-        // const userToken = "secret-token";
-        // setToken(userToken);
       }
     } catch (err) {
       console.log(err.response);
@@ -70,11 +66,15 @@ export default function SignUpScreen({ setTokenAndId, navigation, route }) {
   };
 
   return (
-    <KeyboardAwareScrollView enableOnAndroid>
+    <KeyboardAwareScrollView
+      contentContainerStyle={styles.container}
+      enableOnAndroid={true}
+      extraScrollHeight={25}
+    >
       <View style={styles.container}>
         <View style={styles.wrapper}>
           <View style={styles.logo}>
-            <FontAwesome5 name="airbnb" size={92} color={colors.red} />
+            <FontAwesome5 name="airbnb" size={90} color={colors.red} />
             <Text style={{ fontSize: 20, marginTop: 10 }}>Sign Up</Text>
           </View>
           <View style={styles.form}>
@@ -84,6 +84,7 @@ export default function SignUpScreen({ setTokenAndId, navigation, route }) {
               keyboardType="email-address"
               value={email}
               onChangeText={(email) => setEmail(email)}
+              autoCompleteType="email"
             />
             <TextInput
               style={styles.input}
@@ -95,7 +96,7 @@ export default function SignUpScreen({ setTokenAndId, navigation, route }) {
               style={[styles.input, styles.textarea]}
               numberOfLines={4}
               multiline
-              placeholder="Describe yourself in a few words..."
+              placeholder="describe yourself in a few words..."
               value={description}
               onChangeText={(description) => setDescription(description)}
             />
@@ -108,7 +109,7 @@ export default function SignUpScreen({ setTokenAndId, navigation, route }) {
             />
             <TextInput
               style={styles.input}
-              placeholder="Confirm password"
+              placeholder="confirm password"
               value={confirmPassword}
               onChangeText={(confirmPassword) =>
                 setConfirmPassword(confirmPassword)
@@ -127,7 +128,7 @@ export default function SignUpScreen({ setTokenAndId, navigation, route }) {
               style={styles.submit}
               onPress={handleSubmit}
             >
-              <Text style={{ fontSize: 16, textAlign: "center" }}>Sign Up</Text>
+              <Text style={[styles.txt_btn, { color: "white" }]}>Sign Up</Text>
             </TouchableOpacity>
             <TouchableOpacity
               activeOpacity={0.8}
@@ -148,7 +149,7 @@ export default function SignUpScreen({ setTokenAndId, navigation, route }) {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flexGrow: 1,
     backgroundColor: "white",
   },
   wrapper: {
@@ -189,10 +190,17 @@ const styles = StyleSheet.create({
   submit: {
     width: "80%",
     paddingVertical: 10,
-    marginVertical: 10,
+    marginVertical: 15,
+    backgroundColor: colors.red,
     borderColor: colors.red,
     borderWidth: 2,
-    borderRadius: 25,
+    borderRadius: 30,
+  },
+  txt_btn: {
+    fontSize: 16,
+    textAlign: "center",
+    color: colors.red,
+    fontWeight: "bold",
   },
   errorMessage: {
     color: colors.errorMessage,

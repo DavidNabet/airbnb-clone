@@ -12,9 +12,11 @@ import {
   Platform,
   Button,
   Image,
+  SafeAreaView,
+  ScrollView,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { FontAwesome5 } from "@expo/vector-icons";
+import { FontAwesome5, MaterialCommunityIcons } from "@expo/vector-icons";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { colors, border } from "../assets/js/colors";
 import * as ImagePicker from "expo-image-picker";
@@ -45,11 +47,13 @@ const ProfileScreen = ({ navigation, setTokenAndId }) => {
             },
           }
         );
-        console.log(response.data);
+        // console.log(response.data);
         setEmail(response.data.email);
         setUsername(response.data.username);
         setDescription(response.data.description);
-        setSelectedPicture(response.data.photo[0].url);
+        if (response.data.photo) {
+          setSelectedPicture(response.data.photo[0].url);
+        }
       } catch (err) {
         console.log(err.response);
         console.log(err.message);
@@ -161,22 +165,16 @@ const ProfileScreen = ({ navigation, setTokenAndId }) => {
     }
   };
 
-  // enableOnAndroid={true}
-  // enableAutomaticScroll={Platform.OS === "ios"}
   return (
-    <>
+    <KeyboardAwareScrollView
+      contentContainerStyle={styles.container}
+      enableOnAndroid={true}
+    >
       <View style={styles.container}>
         <View style={styles.wrapper}>
-          <View style={{ flexDirection: "row", alignItems: "center" }}>
+          <View style={styles.top}>
             <View style={styles.avatar}>
-              {/* {avatar === null ? (
-                <FontAwesome5
-                  name="user-alt"
-                  size={84}
-                  color={colors.lightGrey}
-                />
-              ) : null} */}
-              {selectedPicture && selectedPicture !== null ? (
+              {selectedPicture ? (
                 <Image
                   source={{ uri: selectedPicture }}
                   style={styles.selectedImage}
@@ -201,8 +199,20 @@ const ProfileScreen = ({ navigation, setTokenAndId }) => {
               )}
             </View>
             <View style={styles.edit_avatar}>
-              <Button title="Gallery" onPress={getPermissionAndPhoto} />
-              <Button title="Camera" onPress={getPermissionAndCamera} />
+              <TouchableOpacity onPress={getPermissionAndPhoto}>
+                <MaterialCommunityIcons
+                  name="image-multiple"
+                  size={28}
+                  color={colors.grey}
+                />
+              </TouchableOpacity>
+              <TouchableOpacity onPress={getPermissionAndCamera}>
+                <MaterialCommunityIcons
+                  name="camera"
+                  size={28}
+                  color={colors.grey}
+                />
+              </TouchableOpacity>
             </View>
           </View>
           <View style={styles.form}>
@@ -234,21 +244,21 @@ const ProfileScreen = ({ navigation, setTokenAndId }) => {
               style={styles.submit}
               onPress={handleSubmit}
             >
-              <Text style={{ fontSize: 16, textAlign: "center" }}>Update</Text>
+              <Text style={styles.txt_btn}>Update</Text>
             </TouchableOpacity>
             <TouchableOpacity
               activeOpacity={0.8}
-              style={[styles.submit, { backgroundColor: colors.greyRating }]}
+              style={[styles.submit, { backgroundColor: colors.red }]}
               onPress={() => {
                 setTokenAndId(null);
               }}
             >
-              <Text style={{ fontSize: 16, textAlign: "center" }}>Log Out</Text>
+              <Text style={[styles.txt_btn, { color: "white" }]}>Log Out</Text>
             </TouchableOpacity>
           </View>
         </View>
       </View>
-    </>
+    </KeyboardAwareScrollView>
   );
 };
 
@@ -256,24 +266,34 @@ export default ProfileScreen;
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     backgroundColor: "white",
+    flexGrow: 1,
   },
   wrapper: {
-    paddingHorizontal: 10,
+    flex: 1,
     alignItems: "center",
     flexDirection: "column",
-    justifyContent: "space-around",
-    flex: 1,
+    justifyContent: "space-between",
+    marginVertical: 20,
+  },
+  top: {
+    width: "80%",
+    margin: "auto",
+    height: "auto",
+    // ...border,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-evenly",
   },
   avatar: {
-    ...border,
     borderRadius: 100,
-    borderColor: colors.red,
   },
   edit_avatar: {
+    // ...border,
+    height: 100,
     flexDirection: "column",
-    justifyContent: "space-between",
+    justifyContent: "space-around",
+    // flex: 1,
   },
   uploading: {
     alignItems: "center",
@@ -316,6 +336,12 @@ const styles = StyleSheet.create({
     borderColor: colors.red,
     borderWidth: 2,
     borderRadius: 25,
+  },
+  txt_btn: {
+    fontSize: 16,
+    textAlign: "center",
+    color: colors.red,
+    fontWeight: "bold",
   },
   errorMessage: {
     color: colors.errorMessage,
