@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { useRoute } from "@react-navigation/core";
 import {
   Text,
   Image,
@@ -9,20 +8,44 @@ import {
   TouchableOpacity,
   Dimensions,
 } from "react-native";
-import { SwiperFlatList } from "react-native-swiper-flatlist";
 import axios from "axios";
-import { colors, border } from "../assets/js/colors";
 import Rating from "../components/Rating";
+import { colors } from "../assets/js/colors";
+// icone
 import { Ionicons } from "@expo/vector-icons";
+// carrousel
+import { SwiperFlatList } from "react-native-swiper-flatlist";
+// gps
+import * as Location from "expo-location";
+// carte
+import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 
 export default function RoomDetailsScreen({ route }) {
+  const { id } = route.params;
   const { width } = Dimensions.get("window");
   const [data, setData] = useState({});
   const [isLoading, setIsLoading] = useState(true);
   const [isMore, setIsMore] = useState(false);
-  let id = route.params.id;
+  const [coords, setCoords] = useState({});
 
   useEffect(() => {
+    const getPermission = async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      console.log(status);
+      if (status === "granted") {
+        let location = await Location.getCurrentPositionAsync({
+          accuracy: Location.Accuracy.Highest,
+        });
+        const coordinate = {
+          latitude: location.latitude,
+          longitude: location.longitude,
+        };
+        setCoords(coordinate);
+      } else {
+        alert("Permission not ok");
+      }
+    };
+    getPermission();
     const fetchData = async () => {
       try {
         const response = await axios.get(
@@ -51,7 +74,10 @@ export default function RoomDetailsScreen({ route }) {
       <View style={styles.room}>
         <View style={styles.cover}>
           <SwiperFlatList
-            showPagination
+            autoplay
+            autoplayDelay={4}
+            autoplayLoop
+            autoplayLoopKeepAnimation
             index={0}
             data={data.photos}
             renderItem={({ item }) => (
@@ -90,7 +116,13 @@ export default function RoomDetailsScreen({ route }) {
             activeOpacity={0.8}
             onPress={() => setIsMore(!isMore)}
           >
-            <Text style={{ color: colors.grey, fontSize: 14, marginRight: 2 }}>
+            <Text
+              style={{
+                color: colors.grey,
+                fontSize: 14,
+                marginRight: 2,
+              }}
+            >
               Show {isMore ? "Less" : "More"}
             </Text>
             {isMore ? (
@@ -100,12 +132,37 @@ export default function RoomDetailsScreen({ route }) {
             )}
           </TouchableOpacity>
         </View>
+        <View style={{ padding: 20 }}>
+          <MapView
+            style={styles.map}
+            provider={PROVIDER_GOOGLE}
+            initialRegion={{
+              latitude: coords.latitude ? coords.latitude : 48.857677,
+              longitude: coords.longitude ? coords.longitude : 2.35095,
+              latitudeDelta: 0.09,
+              longitudeDelta: 0.09,
+            }}
+            showsUserLocation={true}
+          >
+            <Marker
+              coordinate={{
+                latitude: data.location[1],
+                longitude: data.location[0],
+              }}
+            />
+          </MapView>
+        </View>
       </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  safearea: {
+    flexGrow: 1,
+    backgroundColor: "white",
+    padding: 0,
+  },
   container: {
     flex: 1,
     backgroundColor: "white",
@@ -159,5 +216,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "flex-end",
     paddingVertical: 6,
+  },
+  map: {
+    flexGrow: 1,
+    height: 200,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });

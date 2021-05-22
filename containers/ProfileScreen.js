@@ -26,6 +26,7 @@ const ProfileScreen = ({ navigation, setTokenAndId }) => {
   const [description, setDescription] = useState("");
   const [avatar, setAvatar] = useState();
   const [isLoadingImage, setIsLoadingImage] = useState(true);
+  const [success, setSuccess] = useState(false);
   //ImagePicker
   const [selectedPicture, setSelectedPicture] = useState(null);
   const [takenPicture, setTakenPicture] = useState(null);
@@ -69,9 +70,11 @@ const ProfileScreen = ({ navigation, setTokenAndId }) => {
     try {
       setUploading(true);
       if (!pickerResult.cancelled) {
+        // on stocke dans la variable uri le chemin de la photo
         const uri = pickerResult.uri;
-
+        // le tableau contient 2 élements : 1er élément = le chemin de la photo jusqu'au point / 2ème élément : le format de la photo (après le point)
         const uriParts = uri.split(".");
+        // on stocke dans la variable fileType le format de la photo (ici : jpg)
         const fileType = uriParts[uriParts.length - 1];
 
         const formData = new FormData();
@@ -92,8 +95,9 @@ const ProfileScreen = ({ navigation, setTokenAndId }) => {
             },
           }
         );
-        console.log(uploadResponse.data.photo[0].url);
+        // console.log(uploadResponse.data.photo[0].url);
 
+        // Si la photo existe et que sa longueur est supérieure à 0
         if (
           Array.isArray(uploadResponse.data.photo) === true &&
           uploadResponse.data.photo.length > 0
@@ -115,11 +119,8 @@ const ProfileScreen = ({ navigation, setTokenAndId }) => {
     if (status === "granted") {
       const result = await ImagePicker.launchImageLibraryAsync();
       console.log(result);
-      // Si result.cancelled vaut true, cela veut dire qu'aucune image a été sélectionné
+      // Si result.cancelled vaut true, cela veut dire qu'aucune image n'a été sélectionné
       handleImagePicked(result);
-      // if (!result.cancelled) {
-      //   setSelectedPicture(result.uri);
-      // }
     } else {
       alert("Permission to access the gallery denied");
       return;
@@ -132,9 +133,6 @@ const ProfileScreen = ({ navigation, setTokenAndId }) => {
       const result = await ImagePicker.launchCameraAsync();
       console.log(result);
       handleImagePicked(result);
-      // if (!result.cancelled) {
-      //   setTakenPicture(result.uri);
-      // }
     } else {
       alert("Permission to access the camera denied");
       return;
@@ -158,8 +156,13 @@ const ProfileScreen = ({ navigation, setTokenAndId }) => {
           },
         }
       );
-      alert("Your change has been made");
-      navigation.navigate("Home");
+      setSuccess(true);
+
+      setTimeout(() => {
+        setSuccess(false);
+      }, 2500);
+      // alert("Your change has been made");
+      // navigation.navigate("Home");
     } catch (e) {
       console.log(e.message);
     }
@@ -239,6 +242,12 @@ const ProfileScreen = ({ navigation, setTokenAndId }) => {
             />
           </View>
           <View style={styles.sign}>
+            {success && (
+              <Text style={[styles.success, { fontSize: 14 }]}>
+                Update Completed
+              </Text>
+            )}
+
             <TouchableOpacity
               activeOpacity={0.8}
               style={styles.submit}
@@ -343,8 +352,12 @@ const styles = StyleSheet.create({
     color: colors.red,
     fontWeight: "bold",
   },
-  errorMessage: {
+  error: {
     color: colors.errorMessage,
-    fontSize: 14,
+  },
+  success: {
+    color: colors.green,
+    marginVertical: 5,
+    fontWeight: "bold",
   },
 });
